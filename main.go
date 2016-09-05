@@ -35,10 +35,15 @@ func main() {
 	cmdName := args[0]
 	cmdArgs := args[1:]
 
-	herokuDeployWrap(cmdName, cmdArgs, os.Stdin, os.Stdout, os.Stderr)
+	exitStatus, execErr := herokuDeployWrap(cmdName, cmdArgs, os.Stdin, os.Stdout, os.Stderr)
+	if execErr != nil {
+		panic(execErr)
+	}
+
+	os.Exit(exitStatus)
 }
 
-func herokuDeployWrap(cmdName string, cmdArgs []string, stdin io.Reader, stdout io.Writer, stderr io.Writer) {
+func herokuDeployWrap(cmdName string, cmdArgs []string, stdin io.Reader, stdout io.Writer, stderr io.Writer) (int, error) {
 	cmd := exec.Command(cmdName, cmdArgs...)
 
 	resultBuffer := new(bytes.Buffer)
@@ -50,12 +55,12 @@ func herokuDeployWrap(cmdName string, cmdArgs []string, stdin io.Reader, stdout 
 	exitStatus, err := posixexec.Run(cmd)
 
 	if err != nil {
-		panic(err)
+		return -1, err
 	}
 
-	if !strings.Contains(resultBuffer.String(), "remote: Verifying deploy... done.") {
+	if exitStatus == 0 && !strings.Contains(resultBuffer.String(), "remote: Verifying deploy... done.") {
 		exitStatus = 1
 	}
 
-	os.Exit(exitStatus)
+	return exitStatus, nil
 }
