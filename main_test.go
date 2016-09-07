@@ -31,6 +31,16 @@ func TestExit0WithMorePatterns(t *testing.T) {
 	}
 }
 
+func TestEverythingUpToDate(t *testing.T) {
+	stdin := new(bytes.Buffer)
+	stdout := new(bytes.Buffer)
+	stderr := new(bytes.Buffer)
+	exitStatus, err := herokuDeployWrap("sh", []string{"-c", "echo \"Everything up-to-date\""}, stdin, stdout, stderr)
+
+	assert.Equal(t, 0, exitStatus)
+	assert.Nil(t, err)
+}
+
 func TestDeployCommandFailed(t *testing.T) {
 	stdin := new(bytes.Buffer)
 	stdout := new(bytes.Buffer)

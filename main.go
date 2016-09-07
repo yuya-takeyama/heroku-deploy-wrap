@@ -52,7 +52,7 @@ func main() {
 	os.Exit(exitStatus)
 }
 
-var deploySuccessPattern = regexp.MustCompile(`remote: Verifying deploy\.{1,10} done\.`)
+var deploySuccessPattern = regexp.MustCompile(`^(?:remote: Verifying deploy\.{1,10} done\.|Everything up-to-date)\n?$`)
 
 func herokuDeployWrap(cmdName string, cmdArgs []string, stdin io.Reader, stdout io.Writer, stderr io.Writer) (int, error) {
 	cmd := exec.Command(cmdName, cmdArgs...)
