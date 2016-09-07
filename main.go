@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"regexp"
 	"strings"
 
 	flags "github.com/jessevdk/go-flags"
@@ -51,6 +52,8 @@ func main() {
 	os.Exit(exitStatus)
 }
 
+var deploySuccessPattern = regexp.MustCompile(`remote: Verifying deploy\.{1,10} done\.`)
+
 func herokuDeployWrap(cmdName string, cmdArgs []string, stdin io.Reader, stdout io.Writer, stderr io.Writer) (int, error) {
 	cmd := exec.Command(cmdName, cmdArgs...)
 
@@ -68,7 +71,7 @@ func herokuDeployWrap(cmdName string, cmdArgs []string, stdin io.Reader, stdout 
 
 	info(fmt.Sprintf("Command exitted with %d", exitStatus))
 
-	if exitStatus == 0 && !strings.Contains(resultBuffer.String(), "remote: Verifying deploy... done.") {
+	if exitStatus == 0 && !deploySuccessPattern.MatchReader(resultBuffer) {
 		exitStatus = 1
 	}
 
