@@ -1,7 +1,7 @@
 package main
 
 // Version is displayed in help command
-const Version string = "0.0.4"
+const Version string = "0.0.5"
 
 // GitCommit is commit hash of the release
 // This is set in compilation automatically
