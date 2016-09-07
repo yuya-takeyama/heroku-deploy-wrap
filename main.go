@@ -35,9 +35,17 @@ func main() {
 	cmdName := args[0]
 	cmdArgs := args[1:]
 
+	info(fmt.Sprintf("Running command: %s %s", cmdName, strings.Join(cmdArgs, " ")))
+
 	exitStatus, execErr := herokuDeployWrap(cmdName, cmdArgs, os.Stdin, os.Stdout, os.Stderr)
 	if execErr != nil {
 		panic(execErr)
+	}
+
+	if exitStatus == 0 {
+		info("Successfully deployed!")
+	} else {
+		info("Failed to deploy...")
 	}
 
 	os.Exit(exitStatus)
@@ -58,9 +66,15 @@ func herokuDeployWrap(cmdName string, cmdArgs []string, stdin io.Reader, stdout 
 		return -1, err
 	}
 
+	info(fmt.Sprintf("Command exitted with %d", exitStatus))
+
 	if exitStatus == 0 && !strings.Contains(resultBuffer.String(), "remote: Verifying deploy... done.") {
 		exitStatus = 1
 	}
 
 	return exitStatus, nil
+}
+
+func info(s string) {
+	fmt.Fprintf(os.Stderr, "%s: %s\n", AppName, s)
 }
