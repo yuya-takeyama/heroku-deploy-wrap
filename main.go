@@ -36,6 +36,7 @@ func main() {
 	cmdName := args[0]
 	cmdArgs := args[1:]
 
+	info(fmt.Sprintf("Version: %s , Revision: %s", Version, GitCommit))
 	info(fmt.Sprintf("Running command: %s %s", cmdName, strings.Join(cmdArgs, " ")))
 
 	exitStatus, execErr := herokuDeployWrap(cmdName, cmdArgs, os.Stdin, os.Stdout, os.Stderr)
